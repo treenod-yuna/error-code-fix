@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unity Error Auto-Fixer — 설치 및 사용 가이드</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-card: #f8f9fa;
+      --bg-code: #f1f3f5;
+      --border: #e1e4e8;
+      --border-light: #eaecef;
+      --text: #24292f;
+      --text-dim: #656d76;
+      --text-bright: #1b1f23;
+      --accent: #0969da;
+      --accent-light: #ddf4ff;
+      --green: #1a7f37;
+      --green-light: #dafbe1;
+      --red: #cf222e;
+      --red-light: #ffebe9;
+      --yellow: #9a6700;
+      --yellow-light: #fff8c5;
+      --orange: #bc4c00;
+      --orange-light: #fff1e5;
+      --radius: 8px;
+      --radius-sm: 6px;
+      --max-w: 820px;
+      --font: -apple-system, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      --font-mono: 'Cascadia Code', 'Consolas', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #0550ae;
+    }
+    strong { color: var(--text-bright); }
+
+    /* ===== 히어로 ===== */
+    .hero {
+      background: linear-gradient(160deg, #f6f8fa 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 24px 52px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 16px;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text-bright);
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-dim);
+      max-width: 500px;
+      margin: 0 auto 28px;
+    }
+    .hero-tags {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-tag {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-tag .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot-green { background: var(--green); }
+    .dot-blue { background: var(--accent); }
+    .dot-yellow { background: var(--yellow); }
+
+    /* ===== 네비게이션 ===== */
+    .toc-bar {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toc-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .toc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .toc-link:hover { color: var(--accent); border-bottom-color: var(--accent); text-decoration: none; }
+    .toc-num {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== 컨텐츠 ===== */
+    .content { max-width: var(--max-w); margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ===== 섹션 ===== */
+    .section { padding-top: 48px; }
+    .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+    .section-number {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .section-title { font-size: 24px; font-weight: 700; color: var(--text-bright); }
+
+    /* ===== 카드 ===== */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 12px;
+    }
+    .card p, .card li { font-size: 14px; line-height: 1.8; }
+    .card ul, .card ol { padding-left: 20px; }
+    .card li { margin-bottom: 5px; }
+
+    /* ===== 코드 ===== */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .code-header {
+      background: #f1f3f5;
+      border-bottom: 1px solid var(--border);
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .code-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .copy-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text-dim);
+      font-size: 11px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+    .code-body {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: #0550ae;
+      overflow-x: auto;
+      user-select: all;
+    }
+    .code-body .comment { color: #8b949e; }
+    .code-body .highlight { color: #953800; }
+
+    /* ===== 스텝 ===== */
+    .step-list { display: flex; flex-direction: column; gap: 12px; }
+    .step-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg-card);
+    }
+    .step-num {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .step-label { font-size: 14px; font-weight: 600; color: var(--text-bright); }
+    .step-body { padding: 18px 20px; }
+    .step-body p { font-size: 14px; margin-bottom: 8px; }
+
+    /* ===== 경로 ===== */
+    .menu-path {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--accent-light);
+      border: 1px solid #b6e3ff;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .menu-path .sep { color: #8b949e; margin: 0 1px; }
+
+    /* ===== UI 모의 (윈도우 스타일) ===== */
+    .ui-mock {
+      background: #fafbfc;
+      border: 1px solid #d0d7de;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 16px 0;
+      font-size: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .ui-titlebar {
+      background: #f0f0f0;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #d0d7de;
+    }
+    .ui-titlebar-left { width: 50px; }
+    .ui-titlebar-title {
+      color: #555;
+      font-size: 12px;
+      font-family: var(--font);
+      font-weight: 500;
+      flex: 1;
+      text-align: center;
+    }
+    .win-btns { display: flex; gap: 0; }
+    .win-btn {
+      width: 28px; height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 10px;
+    }
+    .ui-body { padding: 14px 16px; line-height: 1.8; color: #444; font-family: var(--font); }
+    .ui-body .label { color: var(--accent); font-weight: 600; }
+    .ui-body .btn-mock {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 3px 12px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 11px;
+      font-family: var(--font);
+    }
+    .ui-body .btn-mock-green { background: var(--green); color: #fff; }
+    .btn-mock-dim {
+      background: #fff;
+      border: 1px solid #d0d7de;
+      color: #555;
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: var(--font);
+    }
+    .ui-body .divider { border-top: 1px solid #e8e8e8; margin: 10px 0; }
+    .ui-body .row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .diff-del { background: var(--red-light); color: var(--red); padding: 2px 6px; border-radius: 3px; font-family: var(--font-mono); font-size: 11px; }
+    .diff-add { background: var(--green-light); color: var(--green); padding: 2px 6px; border-radius: 3px; font-family: var(--font-mono); font-size: 11px; }
+
+    /* ===== 알림 ===== */
+    .notice {
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 14px 0;
+      font-size: 13px;
+      line-height: 1.7;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
+    .notice-info { background: var(--accent-light); border: 1px solid #b6e3ff; color: #0550ae; }
+    .notice-warn { background: var(--yellow-light); border: 1px solid #efd88e; color: var(--yellow); }
+    .notice-success { background: var(--green-light); border: 1px solid #acdcb4; color: var(--green); }
+
+    /* ===== 테이블 ===== */
+    .table-wrap { overflow-x: auto; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: var(--bg-card);
+      color: var(--text-bright);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border-light); }
+    tr:hover td { background: #f6f8fa; }
+
+    /* ===== 배지 ===== */
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; }
+    .badge-a { background: var(--green-light); color: var(--green); }
+    .badge-free { background: var(--accent-light); color: var(--accent); }
+
+    /* ===== 흐름도 ===== */
+    .flow-chart { display: flex; flex-direction: column; margin: 20px 0; }
+    .flow-item { display: flex; align-items: stretch; gap: 16px; }
+    .flow-line { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+    .flow-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--accent);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .flow-dot.dot-done { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+    .flow-connector { width: 2px; flex: 1; background: var(--border); margin: 3px 0; }
+    .flow-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+    .flow-content h4 { font-size: 13px; color: var(--text-bright); margin-bottom: 3px; }
+    .flow-content p { font-size: 12px; color: var(--text-dim); }
+
+    /* ===== 키보드 ===== */
+    kbd {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    /* ===== FAQ ===== */
+    .faq-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+    .faq-item summary {
+      padding: 14px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-bright);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-item summary:hover { color: var(--accent); }
+    .faq-item summary::before {
+      content: '>';
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+    .faq-item[open] summary::before { transform: rotate(90deg); }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-answer { padding: 0 18px 16px; font-size: 13px; line-height: 1.75; }
+    .faq-answer ul { padding-left: 20px; }
+
+    /* ===== 2열 ===== */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ===== 푸터 ===== */
+    .footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .footer a { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 26px; }
+      .hero { padding: 44px 16px 36px; }
+      .content { padding: 0 16px 60px; }
+      .card { padding: 18px; }
+      .section-title { font-size: 20px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== 히어로 ===== -->
+<div class="hero">
+  <div class="hero-badge">Tutorial Guide</div>
+  <h1>Unity <span>Error Auto-Fixer</span></h1>
+  <p>Google Gemini AI로 Unity 에러를 분석하고 원클릭으로 코드를 수정합니다.</p>
+  <div class="hero-tags">
+    <span class="hero-tag"><span class="dot dot-green"></span> Unity 2021.3+</span>
+    <span class="hero-tag"><span class="dot dot-blue"></span> v0.2.0</span>
+    <span class="hero-tag"><span class="dot dot-yellow"></span> Gemini API 무료</span>
+  </div>
+</div>
+
+<!-- ===== 목차 ===== -->
+<nav class="toc-bar">
+  <div class="toc-inner">
+    <a href="#install" class="toc-link"><span class="toc-num">1</span> 설치</a>
+    <a href="#apikey" class="toc-link"><span class="toc-num">2</span> API 키</a>
+    <a href="#usage" class="toc-link"><span class="toc-num">3</span> 사용법</a>
+    <a href="#faq" class="toc-link"><span class="toc-num">4</span> FAQ</a>
+  </div>
+</nav>
+
+<div class="content">
+
+  <!-- SECTION 1: 설치 -->
+  <section class="section" id="install">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <h2 class="section-title">패키지 설치</h2>
+    </div>
+
+    <div class="card">
+      <h3>요구 사항</h3>
+      <ul>
+        <li><strong>Unity 2021.3 LTS</strong> 이상</li>
+        <li>인터넷 연결 (Gemini API 호출용)</li>
+        <li>Google 계정 (API 키 발급용, 무료)</li>
+      </ul>
+    </div>
+
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-label">Package Manager 열기</div>
+        </div>
+        <div class="step-body">
+          <p>Unity 에디터 상단 메뉴에서:</p>
+          <p><span class="menu-path">Window <span class="sep">></span> Package Manager</span></p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-label">Add package from git URL 선택</div>
+        </div>
+        <div class="step-body">
+          <p>Package Manager 창 좌측 상단의 <strong>+</strong> 버튼을 클릭한 뒤, <strong>"Add package from git URL..."</strong>을 선택합니다.</p>
+          <div class="ui-mock">
+            <div class="ui-titlebar">
+              <div class="ui-titlebar-left"></div>
+              <div class="ui-titlebar-title">Package Manager</div>
+              <div class="win-btns">
+                <div class="win-btn">&#x2013;</div>
+                <div class="win-btn">&#x25A1;</div>
+                <div class="win-btn">&#x2715;</div>
+              </div>
+            </div>
+            <div class="ui-body">
+              <div class="row"><span class="btn-mock">+</span> <span style="color:var(--text-dim); font-size:12px;">&#9664; 이 버튼 클릭</span></div>
+              <div style="margin-left:40px; margin-top:8px; background:#fff; padding:8px 14px; border-radius:6px; border:1px solid #d0d7de; display:inline-block;">
+                <div style="color:#888; margin-bottom:3px; font-size:12px;">Add package from disk...</div>
+                <div style="color:var(--accent); font-weight:600; font-size:12px;">&#9656; Add package from git URL...</div>
+                <div style="color:#888; margin-top:3px; font-size:12px;">Add package by name...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-label">URL 입력</div>
+        </div>
+        <div class="step-body">
+          <p>아래 URL을 복사하여 입력란에 붙여넣고 <strong>Add</strong> 버튼을 클릭합니다.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-label">Git URL</span>
+              <button class="copy-btn" onclick="copyText(this, 'https://github.com/treenod-yuna/error-code-fix.git?path=com.errorfixer.unity')">복사</button>
+            </div>
+            <div class="code-body">https://github.com/treenod-yuna/error-code-fix.git?path=com.errorfixer.unity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice notice-success">
+      <span class="notice-icon">&#10003;</span>
+      <div>설치가 완료되면 Unity 메뉴에 <span class="menu-path">Tools <span class="sep">></span> Error Auto Fixer</span> 메뉴가 나타납니다.</div>
+    </div>
+
+  </section>
+
+  <!-- SECTION 2: API 키 -->
+  <section class="section" id="apikey">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <h2 class="section-title">Gemini API 키 발급 (무료)</h2>
+    </div>
+
+    <div class="card">
+      <h3>API 키가 필요한 이유</h3>
+      <p>Error Auto-Fixer는 Google Gemini AI를 사용하여 에러를 분석합니다. API 키는 <strong>무료로 발급</strong>받을 수 있으며, 신용카드 등록이 필요 없습니다.</p>
+      <div class="notice notice-success">
+        <span class="notice-icon">&#10003;</span>
+        <div><strong>완전 무료!</strong> Gemini API 무료 티어로 일일 최대 250회 분석이 가능합니다. 별도 과금이 없습니다.</div>
+      </div>
+    </div>
+
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-label">Google AI Studio 접속</div>
+        </div>
+        <div class="step-body">
+          <p>아래 링크에서 Google 계정으로 로그인합니다.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-label">URL</span>
+              <button class="copy-btn" onclick="copyText(this, 'https://aistudio.google.com')">복사</button>
+            </div>
+            <div class="code-body"><a href="https://aistudio.google.com" target="_blank">https://aistudio.google.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-label">API 키 생성</div>
+        </div>
+        <div class="step-body">
+          <p>좌측 메뉴에서 <strong>"API 키"</strong> 또는 상단의 <strong>"API 키 가져오기"</strong> 버튼을 클릭합니다.</p>
+          <p><strong>"API 키 만들기"</strong>를 눌러 새 키를 생성하고, 생성된 키를 복사합니다.</p>
+          <div class="notice notice-warn">
+            <span class="notice-icon">!</span>
+            <div><strong>보안 주의:</strong> API 키는 비밀번호처럼 취급하세요. 코드에 하드코딩하거나 Git에 커밋하지 마세요.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-label">Unity에 API 키 입력</div>
+        </div>
+        <div class="step-body">
+          <p>Unity 에디터에서 설정 창을 엽니다:</p>
+          <p><span class="menu-path">Tools <span class="sep">></span> Error Auto Fixer <span class="sep">></span> Settings</span></p>
+          <p><strong>Gemini API Key</strong> 입력란에 복사한 키를 붙여넣고 <strong>[저장]</strong> 버튼을 클릭합니다.</p>
+
+          <div class="ui-mock">
+            <div class="ui-titlebar">
+              <div class="ui-titlebar-left"></div>
+              <div class="ui-titlebar-title">Error Auto Fixer Settings</div>
+              <div class="win-btns">
+                <div class="win-btn">&#x2013;</div>
+                <div class="win-btn">&#x25A1;</div>
+                <div class="win-btn">&#x2715;</div>
+              </div>
+            </div>
+            <div class="ui-body">
+              <div class="row"><span class="label">Gemini API Key</span></div>
+              <div class="row" style="margin-top:4px;">
+                <span style="background:#f6f8fa; padding:5px 12px; border-radius:5px; border:1px solid #d0d7de; flex:1; color:#999; letter-spacing:2px; font-size:13px;">&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</span>
+                <span class="btn-mock-dim">보기</span>
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <span class="btn-mock">저장</span>
+                <span class="btn-mock" style="background:#0d6d8e;">연결 테스트</span>
+              </div>
+              <div class="divider"></div>
+              <div style="background:var(--green-light); border:1px solid #acdcb4; border-radius:5px; padding:8px 12px; color:var(--green); font-size:12px;">
+                &#10003; 연결 성공! Gemini API가 정상적으로 응답합니다.
+              </div>
+            </div>
+          </div>
+
+          <p><strong>[연결 테스트]</strong> 버튼으로 키가 올바르게 작동하는지 확인할 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: 사용법 -->
+  <section class="section" id="usage">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <h2 class="section-title">사용 방법</h2>
+    </div>
+
+    <div class="card">
+      <h3>전체 사용 흐름</h3>
+      <div class="flow-chart">
+        <div class="flow-item">
+          <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+          <div class="flow-content">
+            <h4>에러 발생</h4>
+            <p>프로젝트에서 컴파일 에러나 런타임 에러가 발생하면 자동으로 캡처됩니다.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+          <div class="flow-content">
+            <h4>Error Auto Fixer 창 열기</h4>
+            <p><span class="menu-path">Tools <span class="sep">></span> Error Auto Fixer <span class="sep">></span> Open Window</span></p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+          <div class="flow-content">
+            <h4>에러 선택 &amp; 분석</h4>
+            <p>좌측 목록에서 에러를 선택하고 <strong>[분석]</strong> 버튼을 클릭합니다.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+          <div class="flow-content">
+            <h4>AI 분석 결과 확인</h4>
+            <p>Gemini AI가 에러 원인을 분석하고 진단 결과를 표시합니다 (1~5초).</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-line"><div class="flow-dot dot-done"></div></div>
+          <div class="flow-content">
+            <h4>수정 적용</h4>
+            <p>diff 미리보기를 확인하고 <strong>[수정 적용]</strong> 버튼으로 원클릭 패치합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>메인 창 구성</h3>
+      <p>Error Auto Fixer 창은 <strong>2-패널 레이아웃</strong>으로 구성됩니다.</p>
+
+      <div class="ui-mock" style="margin-top:16px;">
+        <div class="ui-titlebar">
+          <div class="ui-titlebar-left"></div>
+          <div class="ui-titlebar-title">Error Auto Fixer</div>
+          <div class="win-btns">
+            <div class="win-btn">&#x2013;</div>
+            <div class="win-btn">&#x25A1;</div>
+            <div class="win-btn">&#x2715;</div>
+          </div>
+        </div>
+        <div style="padding:0;">
+          <div style="background:#f0f0f0; padding:7px 14px; border-bottom:1px solid #d0d7de; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px;">
+            <span style="color:var(--green); font-size:12px;">&#x25CF; 캡처 중</span>
+            <span class="btn-mock-dim" style="padding:2px 10px; font-size:11px;">스캔</span>
+            <span class="btn-mock-dim" style="padding:2px 10px; font-size:11px;">설정</span>
+            <span class="btn-mock-dim" style="padding:2px 10px; font-size:11px;">초기화</span>
+          </div>
+          <div style="display:flex; min-height:210px;">
+            <!-- 좌측 -->
+            <div style="width:38%; border-right:1px solid #d0d7de; padding:10px; font-family:var(--font);">
+              <div style="font-size:10px; color:#999; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; font-weight:600;">에러 목록</div>
+              <div style="background:var(--accent-light); border:1px solid #b6e3ff; border-radius:5px; padding:7px 10px; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <span style="color:var(--green); font-size:10px;">&#x25CF;</span>
+                  <span style="font-size:11px; color:var(--text-bright);">14:23:05</span>
+                  <span style="font-size:11px; color:var(--red);">NullReferenceException</span>
+                </div>
+                <div style="font-size:10px; color:#999; margin-top:2px;">PlayerController.cs:42</div>
+              </div>
+              <div style="padding:7px 10px; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <span style="color:#ccc; font-size:10px;">&#x25CB;</span>
+                  <span style="font-size:11px; color:#888;">14:21:18</span>
+                  <span style="font-size:11px; color:#888;">MissingComponentExcept...</span>
+                </div>
+                <div style="font-size:10px; color:#bbb; margin-top:2px;">EnemyAI.cs:87</div>
+              </div>
+              <div style="padding:7px 10px;">
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <span style="color:#ccc; font-size:10px;">&#x25CB;</span>
+                  <span style="font-size:11px; color:#888;">14:19:55</span>
+                  <span style="font-size:11px; color:#888;">CS0029: Cannot implicit...</span>
+                </div>
+                <div style="font-size:10px; color:#bbb; margin-top:2px;">GameManager.cs:15</div>
+              </div>
+              <div style="padding:6px 8px; margin-top:auto;">
+                <div style="background:#585868; border-radius:4px; padding:8px 0; text-align:center; color:#ddd; font-size:12px; font-weight:500; font-family:var(--font); cursor:default;">분석</div>
+              </div>
+            </div>
+            <!-- 우측 -->
+            <div style="flex:1; padding:12px 14px; font-family:var(--font); display:flex; flex-direction:column;">
+              <div style="font-size:10px; color:#999; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; font-weight:600;">분석 결과</div>
+              <div style="display:flex; gap:6px; margin-bottom:10px;">
+                <span class="badge badge-a" style="font-size:10px;">Track A: 수정 가능</span>
+                <span class="badge badge-free" style="font-size:10px;">확신도: high</span>
+              </div>
+              <div style="font-size:12px; color:#444; margin-bottom:6px;"><strong>진단</strong></div>
+              <div style="font-size:12px; color:#444; margin-bottom:10px; line-height:1.7;">
+                PlayerController.cs의 42번 라인에서 target 변수가 null인 상태로 접근하고 있습니다.
+              </div>
+              <div style="font-size:12px; color:#444; margin-bottom:4px;"><strong>파일 정보</strong></div>
+              <div style="font-size:11px; color:#666; margin-bottom:10px;">Assets/Scripts/PlayerController.cs:42</div>
+              <div style="font-size:12px; color:#444; margin-bottom:4px;"><strong>해결 방법</strong></div>
+              <div style="font-size:11px; color:#666; margin-bottom:10px; line-height:1.7;">null 체크를 추가하여 target이 할당되지 않은 경우를 처리합니다.</div>
+              <div style="font-size:10px; color:#999; margin-bottom:5px; font-weight:600;">수정 미리보기 &nbsp; <span style="color:var(--red);">-1</span> &nbsp; <span style="color:var(--green);">+1</span></div>
+              <div style="background:#f6f8fa; border:1px solid #d0d7de; border-radius:5px; padding:8px 10px; font-size:11px; line-height:1.85; font-family:var(--font-mono);">
+                <div class="diff-del">  42 | -&nbsp;&nbsp;target.Move(direction);</div>
+                <div class="diff-add">&nbsp;&nbsp;&nbsp;&nbsp; | +&nbsp;&nbsp;if (target != null) target.Move(direction);</div>
+              </div>
+              <div style="padding:8px 0 0; margin-top:auto;">
+                <div style="background:#1a7f37; border-radius:4px; padding:10px 0; text-align:center; color:#fff; font-size:13px; font-weight:600; cursor:default;">수정 적용</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <thead><tr><th>영역</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>상단 툴바</strong></td><td>캡처 상태 표시, 콘솔 동기화 [스캔], [설정], 에러 목록 [초기화]</td></tr>
+            <tr><td><strong>좌측 패널</strong></td><td>캡처된 에러를 시간순(최신순)으로 표시. &#x25CF; 분석 완료 / &#x25CB; 미분석</td></tr>
+            <tr><td><strong>[분석] 버튼</strong></td><td>선택한 에러를 Gemini AI에 보내 원인을 분석합니다</td></tr>
+            <tr><td><strong>우측 패널</strong></td><td>AI 진단, diff 미리보기, 수정 버튼 등 상세 결과 표시</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>에러 분석 과정</h3>
+      <ol>
+        <li>에러 목록에서 분석하려는 에러를 <strong>클릭하여 선택</strong>합니다.</li>
+        <li>좌측 하단의 <strong>[분석]</strong> 버튼을 클릭합니다.</li>
+        <li>"Gemini API로 분석 중..." 메시지가 표시되며, 보통 <strong>1~5초</strong> 내에 결과가 나옵니다.</li>
+        <li>동일한 에러를 다시 분석하면 <strong>캐시된 결과가 즉시</strong> 표시됩니다.</li>
+      </ol>
+      <div class="notice notice-info">
+        <span class="notice-icon">i</span>
+        <div><strong>콘솔 동기화:</strong> [스캔] 버튼을 누르면 Unity 콘솔과 에러 목록이 동기화됩니다. 이미 해결된 컴파일 에러는 자동으로 제거됩니다.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>코드 수정 적용</h3>
+      <ol>
+        <li>분석 결과에 <strong>수정 가능</strong>이 표시되면 diff 미리보기를 확인합니다.</li>
+        <li>수정 내용이 적절하다고 판단되면 <strong>[수정 적용]</strong> 버튼을 클릭합니다.</li>
+        <li>확인 대화상자에서 <strong>[적용]</strong>을 선택합니다.</li>
+        <li>파일이 자동으로 수정되고, Unity가 리컴파일을 시작합니다.</li>
+      </ol>
+      <div class="notice notice-warn">
+        <span class="notice-icon">!</span>
+        <div>
+          <strong>수정이 마음에 들지 않으면?</strong><br>
+          Git을 사용 중이라면 <kbd>git checkout -- 파일경로</kbd> 또는 IDE의 <strong>Discard Changes</strong>로 간편하게 되돌릴 수 있습니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: FAQ -->
+  <section class="section" id="faq">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <h2 class="section-title">자주 묻는 질문 (FAQ)</h2>
+    </div>
+
+    <details class="faq-item">
+      <summary>API 키를 입력했는데 "연결 테스트 실패"가 뜹니다</summary>
+      <div class="faq-answer">
+        <ul>
+          <li>API 키를 복사할 때 앞뒤 공백이 포함되지 않았는지 확인하세요.</li>
+          <li>Google AI Studio에서 키가 활성화 상태인지 확인하세요.</li>
+          <li>네트워크 연결 (방화벽, 프록시 등)을 확인하세요.</li>
+          <li>VPN을 사용 중이라면 비활성화 후 재시도하세요.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>비용이 정말 발생하지 않나요?</summary>
+      <div class="faq-answer">
+        <p>네, Google Gemini API 무료 티어를 사용합니다. 카드 등록 없이 일일 최대 250회 분석이 가능하며, 기간 제한 없이 영구 무료입니다.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>"Rate Limit 초과" 에러가 발생합니다</summary>
+      <div class="faq-answer">
+        <p>무료 티어는 분당 10회 요청 제한이 있습니다. 잠시 기다렸다가 다시 시도하세요. 설정에서 <strong>gemini-2.5-flash-lite</strong> (분당 15회, 일일 1,000회)로 모델을 변경하면 여유가 생깁니다.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>AI가 제안한 수정이 틀린 것 같습니다</summary>
+      <div class="faq-answer">
+        <p>LLM 특성상 100% 정확한 수정을 보장하지 않습니다. 반드시 <strong>diff 미리보기를 확인</strong>한 후 적용하세요. 잘못된 수정을 적용했다면 Git의 <code>discard changes</code>로 되돌릴 수 있습니다.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>에러 목록에 표시되지 않는 에러가 있습니다</summary>
+      <div class="faq-answer">
+        <ul>
+          <li><strong>[스캔]</strong> 버튼을 눌러 Unity 콘솔과 동기화하세요.</li>
+          <li>설정에서 "자동 에러 캡처"가 켜져 있는지 확인하세요.</li>
+          <li>Warning 레벨 로그는 캡처되지 않습니다 (Error, Exception, Assert만 캡처).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>내 소스코드가 외부로 전송되나요?</summary>
+      <div class="faq-answer">
+        <p>에러 분석을 위해 <strong>에러 관련 파일의 코드만</strong> Google Gemini API로 전송됩니다. 전체 프로젝트가 전송되지 않으며, 전송 범위는 에러가 발생한 파일/메서드로 최소화됩니다.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>패키지를 제거하려면 어떻게 하나요?</summary>
+      <div class="faq-answer">
+        <p><span class="menu-path">Window <span class="sep">></span> Package Manager</span>에서 "Error Auto Fixer"를 선택한 뒤 <strong>Remove</strong> 버튼을 클릭하면 됩니다.</p>
+      </div>
+    </details>
+  </section>
+
+</div>
+
+<div class="footer">
+  <p>Unity Error Auto-Fixer v0.2.0 &nbsp;&middot;&nbsp; Powered by Google Gemini API &nbsp;&middot;&nbsp; MIT License</p>
+  <p style="margin-top:6px;"><a href="https://aistudio.google.com" target="_blank">Google AI Studio</a></p>
+</div>
+
+<script>
+  function copyText(btn, text) {
+    function onSuccess() {
+      const orig = btn.textContent;
+      btn.textContent = '복사됨!';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; btn.style.borderColor = ''; }, 1500);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(onSuccess);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      onSuccess();
+    }
+  }
+  const links = document.querySelectorAll('.toc-link');
+  const sections = document.querySelectorAll('.section');
+  function updateActive() {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    links.forEach(l => {
+      const active = l.getAttribute('href') === '#' + current;
+      l.style.borderBottomColor = active ? 'var(--accent)' : 'transparent';
+      l.style.color = active ? 'var(--accent)' : '';
+    });
+  }
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+</script>
+
+</body>
+</html>

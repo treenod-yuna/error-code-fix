@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__unityMCP__manage_editor",
+      "mcp__unityMCP__read_console",
+      "mcp__unityMCP__manage_scene",
+      "mcp__unityMCP__manage_asset",
+      "Bash(find:*)",
+      "Bash(git --version:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote add:*)"
+    ]
+  }
+}
