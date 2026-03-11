@@ -1,0 +1,18 @@
+{
+    "name": "ErrorAutoFixer.Editor",
+    "rootNamespace": "ErrorAutoFixer",
+    "references": [
+        "GUID:f5aeda809db244948b70e5068ac26fba"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
